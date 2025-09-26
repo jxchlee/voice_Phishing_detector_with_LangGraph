@@ -8,7 +8,8 @@ FROM python:3.9-slim
 COPY requirements.txt ./
 
 # 4. 필요 패키지 설치
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. 컨테이너 실행 시 실행될 명령어
 
