@@ -40,14 +40,20 @@ class VoicePhishingDetector:
 
 단, 그걸 제외한 모든 상황에서는 툴을 호출하지 마세요.
 """),
-             ('human', '{context}')
+            ('human', '{context}')
         ])
 
         self.chat_prompt = ChatPromptTemplate.from_messages([
             ('system', """당신은 보이스피싱을 탐지하는 수사관입니다.
             텍스트로 된 전화 내용을 보고 보이스피싱 여부를 판단하십시오.
-            만약 보이스피싱이라고 의심된다면 대화 내용 중 어디부분이 의심스러운 부분인지 짚으면서 설명해주세요. 검색 결과 중 관련 내용이 있다면 해당 출처와 자료를 인용해서 설명하세요."""),
-            ('human', '{context}')
+            만약 보이스피싱이라고 의심된다면 대화 내용 중 어디부분이 의심스러운 부분인지 짚으면서 설명해주세요. 검색 결과 중 관련 내용이 있다면 해당 출처와 자료를 인용해서 설명하세요.
+            분석을 시작하기 전 맨 앞에서 보이스피싱 의심여부를 0 ~ 10 사이의 숫자로 표시하세요"""),
+            ('human', '{context}'),
+            ('ai', '''
+score: [0~10 사이읜 숫자]
+한 줄 평가: [진단 결과를 한 줄로 평가가]
+상세 설명 및 근거: [하나씩 자세히 설명]
+            ''')
         ])
     
     def _setup_tools(self):
@@ -112,6 +118,7 @@ class VoicePhishingDetector:
 # 외부에서 사용할 수 있는 함수
 def analyze_voice_phishing(text: str) -> str:
     """보이스피싱 분석 함수"""
+
     detector = VoicePhishingDetector()
     return detector.analyze_text(text)
 

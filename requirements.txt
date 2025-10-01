@@ -1,0 +1,9 @@
+streamlit
+openai-whisper
+librosa
+soundfile
+langchain-openai
+langgraph
+langchain-tavily
+python-dotenv
+langchain-core

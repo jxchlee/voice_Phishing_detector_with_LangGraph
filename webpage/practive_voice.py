@@ -146,24 +146,23 @@ class VoiceToTextConverter:
         print(f"모든 청크 처리 완료! 총 텍스트 길이: {len(full_result['text'])}자")
         return full_result
     
-    def save_transcript(self, result, output_file=None, base_filename=None):
+    def save_transcript(self, result, output_file=None):
         """
         변환된 텍스트를 파일로 저장
         """
-        # src/text 디렉토리 생성
-        text_dir = "src/text"
-        os.makedirs(text_dir, exist_ok=True)
-        
         if output_file is None:
-            if base_filename:
-                # 확장자 제거하고 txt로 변경
-                filename = os.path.splitext(base_filename)[0] + ".txt"
-            else:
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"transcript_{timestamp}.txt"
-            output_file = os.path.join(text_dir, filename)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = f"transcript_{timestamp}.txt"
         
         with open(output_file, 'w', encoding='utf-8') as f:
+            f.write("=== 통화 녹음 텍스트 변환 결과 ===\n")
+            f.write(f"변환 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("=" * 50 + "\n\n")
+            
+            # 전체 텍스트
+            f.write("전체 텍스트:\n")
+            f.write(result["text"] + "\n\n")
+            
             # 세그먼트별 상세 정보
             f.write("세그먼트별 상세:\n")
             f.write("-" * 30 + "\n")
@@ -176,26 +175,6 @@ class VoiceToTextConverter:
         print(f"변환 결과가 저장되었습니다: {output_file}")
         return output_file
     
-    def save_audio_file(self, uploaded_file):
-        """
-        업로드된 오디오 파일을 src/audio에 저장 (같은 이름으로)
-        """
-        # src/audio 디렉토리 생성
-        audio_dir = "src/audio"
-        os.makedirs(audio_dir, exist_ok=True)
-        
-        # 업로드된 파일명 그대로 사용
-        # base_filename = uploaded_file.name
-        base_filename = datetime.now().strftime('%Y%m%d_%H%M%S')+'.'+os.path.splitext(uploaded_file.name)[1][1:]
-        audio_path = os.path.join(audio_dir, base_filename)
-        print(base_filename)
-        # 파일 저장
-        with open(audio_path, 'wb') as f:
-            f.write(uploaded_file.getvalue())
-        
-        print(f"오디오 파일이 저장되었습니다: {audio_path}")
-        return audio_path, base_filename
-    
     def format_time(self, seconds):
         """
         초를 MM:SS 형식으로 변환
@@ -204,7 +183,7 @@ class VoiceToTextConverter:
         seconds = int(seconds % 60)
         return f"{minutes:02d}:{seconds:02d}"
     
-    def process_call_recording(self, audio_file, output_file=None, language="ko", base_filename=None):
+    def process_call_recording(self, audio_file, output_file=None, language="ko"):
         """
         통화 녹음 파일 전체 처리 과정
         """
@@ -216,15 +195,14 @@ class VoiceToTextConverter:
             print("\n=== 변환 결과 ===")
             print(result["text"])
             
-            # 파일로 저장 (같은 이름으로)
-            saved_file = self.save_transcript(result, output_file, base_filename)
+            # 파일로 저장
+            saved_file = self.save_transcript(result, output_file)
             
             return {
                 "success": True,
                 "text": result["text"],
                 "segments": result["segments"],
-                "output_file": saved_file,
-                "base_filename": base_filename
+                "output_file": saved_file
             }
             
         except Exception as e:
