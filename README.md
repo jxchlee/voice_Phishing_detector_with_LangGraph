@@ -1,6 +1,9 @@
 # 보이스피싱 탐지 시스템
 
 음성 파일을 업로드하여 텍스트로 변환하고, AI를 통해 보이스피싱 여부를 판단하는 Streamlit 애플리케이션입니다.
+Lang Graph를 사용해 케이스별 처리과정을 추가하고 Tavily API를 통해 답변의 질을 향상시켰습니다.
+
+![main](https://raw.githubusercontent.com/jxchlee/voice_Phishing_detector_with_LangGraph/refs/heads/main/src/img.png)
 
 ## 기능
 
